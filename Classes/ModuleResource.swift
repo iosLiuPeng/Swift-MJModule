@@ -63,7 +63,28 @@ public protocol ModuleResource: ModuleProtocol {
 
 /// ModuleResource的方法默认实现
 extension ModuleResource {
+    /// 解码
+    static func decode<T>(_ type: T.Type, from data: Data) -> T? where T : Decodable {
+        if let model = try? JSONDecoder().decode(type, from: data) {
+            return model
+        } else if let model = try? PropertyListDecoder().decode(type, from: data) {
+            return model
+        } else {
+            return nil
+        }
+    }
     
+    /// 取Bundle中文件，并转为对应数据类型
+    public static func getModel<T>(type: T.Type, fileName: String) -> T? where T : Decodable {
+        guard let data = getData(fileName: fileName) else { return nil }
+        return decode(type, from: data)
+    }
+    
+    /// 取Bundle中文件，并转为对应数据类型
+    public static func getModel<T>(type: T.Type, fileName: String, extension: String) -> T? where T : Decodable {
+        guard let data = getData(fileName: fileName, extension: `extension`) else { return nil }
+        return decode(type, from: data)
+    }
 }
 
 
@@ -88,29 +109,6 @@ public class DefaultResource: ModuleResource {
         }
     }
     
-    /// 解码
-    static func decode<T>(_ type: T.Type, from data: Data) -> T? where T : Decodable {
-        if let model = try? JSONDecoder().decode(type, from: data) {
-            return model
-        } else if let model = try? PropertyListDecoder().decode(type, from: data) {
-            return model
-        } else {
-            return nil
-        }
-    }
-
-    /// 取Bundle中文件，并转为对应数据类型
-    public static func getModel<T>(type: T.Type, fileName: String) -> T? where T : Decodable {
-        guard let data = getData(fileName: fileName) else { return nil }
-        return decode(type, from: data)
-    }
-    
-    /// 取Bundle中文件，并转为对应数据类型
-    public static func getModel<T>(type: T.Type, fileName: String, extension: String) -> T? where T : Decodable {
-        guard let data = getData(fileName: fileName, extension: `extension`) else { return nil }
-        return decode(type, from: data)
-    }
-
     /// 更新所有配置文件
     public static func updateAllFiles() {}
     
