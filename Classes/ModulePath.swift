@@ -107,8 +107,8 @@ extension ModulePath {
 }
 
 
-// MARK: - DefaultResource
-#if !MODULE_RESOURCE
+// MARK: - DefaultPath
+#if !MODULE_PATH
 public class DefaultPath: ModulePath {
     /*-----------path: URL?-----------*/
     /// 沙盒图片保存目录
