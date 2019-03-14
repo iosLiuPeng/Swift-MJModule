@@ -20,7 +20,7 @@ public struct Folder {
     /// 沙盒配置文件目录
     public static let localConfig    = Config.valueOf("LOCAL_CONFIG_FOLDER_NAME", "localConfig")
     /// Bundle配置文件目录
-    public static let bundleConfig   = Config.valueOf("BUNDLE_CONFIG_FOLDER_NAME", "Config")
+    public static let bundleConfig   = Config.valueOf("BUNDLE_CONFIG_FOLDER_NAME", "Configs")
 }
 
 // MARK: - ModulePath
@@ -42,9 +42,6 @@ public let ThePath = getTheModule("FilePath", DefaultPath.self) as! ModulePath.T
 
 
 public protocol ModulePath: ModuleProtocol {
-    //    /// 常用目录路径缓存
-    //    static var filePathCache:[String : URL] { get set }
-    //
     /*-----------path: URL?-----------*/
     /// 沙盒图片保存目录
     static func localImageURL() -> URL
@@ -141,17 +138,6 @@ public class DefaultPath: ModulePath {
     /// - Parameter folderName: 文件夹名。如果不传或传入空字符串，则DEBUG模式下返回document目录，RELEASE模式下返回library目录
     /// - Returns: 沙盒文件目录
     public static func localFileURL(folderName: String?) -> URL {
-        //        // 文件名
-        //        var fullName = "local-"
-        //        if let folderName = folderName {
-        //            fullName = fullName + folderName
-        //        }
-        //
-        //        // 先取缓存
-        //        if let cacheUrl = filePathCache[fullName] {
-        //            return cacheUrl
-        //        }
-        
         let manager = FileManager.default
         #if DEBUG
         let urls = manager.urls(for: .documentDirectory, in: .userDomainMask)
@@ -170,14 +156,11 @@ public class DefaultPath: ModulePath {
         if manager.fileExists(atPath: url.path) == false {
             // 如果文件夹不存在，则创建
             do {
-                try  manager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+                try manager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
             } catch {
                 LogError("create Directory failed: '\(url.path)'")
             }
         }
-        
-        //        // 存缓存
-        //        filePathCache[fullName] = url
         
         return url
     }
@@ -192,25 +175,11 @@ public class DefaultPath: ModulePath {
     /// - Parameter folderName: 文件夹名。如果不传或传入空字符串，则返回bundle主目录
     /// - Returns: Bundle文件目录
     public static func bundleFileURL(folderName: String?) -> URL? {
-        //        // 文件名
-        //        var fullName = "bundle-"
-        //        if let folderName = folderName {
-        //            fullName = fullName + folderName
-        //        }
-        //
-        //        // 先取缓存
-        //        if let cacheUrl = filePathCache[fullName] {
-        //            return cacheUrl
-        //        }
+        guard var url = Bundle.main.resourceURL else { return nil }
         
-        var url = Bundle.main.resourceURL
-        if let folderName = folderName, url != nil {
-            url = url!.appendingPathComponent(folderName)
+        if let folderName = folderName {
+            url.appendPathComponent(folderName)
         }
-        
-        //        // 存缓存
-        //        filePathCache[fullName] = url
-        
         return url
     }
     

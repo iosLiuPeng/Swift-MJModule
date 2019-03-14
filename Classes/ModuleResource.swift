@@ -31,20 +31,11 @@ public protocol ModuleResource: ModuleProtocol {
     /// - Returns: 文件数据
     static func getData(fileName: String, extension: String) -> Data?
     
-    /// 取Bundle中文件，并转为对应数据类型
+    /// 取文件，并转为对应数据类型
     static func getModel<T>(type: T.Type, fileName: String) -> T? where T : Decodable
     
-    /// 取Bundle中文件，并转为对应数据类型
+    /// 取文件，并转为对应数据类型
     static func getModel<T>(type: T.Type, fileName: String, extension: String) -> T? where T : Decodable
-    
-    
-    /// 更新所有配置文件
-    static func updateAllFiles()
-    
-    /// 更新所有配置文件
-    ///
-    /// - Parameter completion: 更新完成回调
-    static func updateAllFiles(completion: @escaping (Bool) -> Void)
     
     
     /// 添加监听文件更新
@@ -74,13 +65,13 @@ extension ModuleResource {
         }
     }
     
-    /// 取Bundle中文件，并转为对应数据类型
+    /// 取文件，并转为对应数据类型
     public static func getModel<T>(type: T.Type, fileName: String) -> T? where T : Decodable {
         guard let data = getData(fileName: fileName) else { return nil }
         return decode(type, from: data)
     }
     
-    /// 取Bundle中文件，并转为对应数据类型
+    /// 取文件，并转为对应数据类型
     public static func getModel<T>(type: T.Type, fileName: String, extension: String) -> T? where T : Decodable {
         guard let data = getData(fileName: fileName, extension: `extension`) else { return nil }
         return decode(type, from: data)
@@ -108,17 +99,7 @@ public class DefaultResource: ModuleResource {
             return nil
         }
     }
-    
-    /// 更新所有配置文件
-    public static func updateAllFiles() {}
-    
-    /// 更新所有配置文件
-    ///
-    /// - Parameter completion: 更新完成回调
-    public static func updateAllFiles(completion: @escaping (Bool) -> Void) {
-        completion(false)
-    }
-    
+
     /// 添加监听文件更新
     ///
     /// - Parameters:
